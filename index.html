@@ -5,22 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DADING TikTok Shop</title>
     
-    <!-- Telegram Web App SDK (បានបន្ថែមថ្មីដើម្បីឱ្យដំណើរការជា Mini App ក្នុងតេឡេក្រាម) -->
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // ប្រាប់ឱ្យ Telegram ដឹងថា Mini App ត្រៀមខ្លួនរួចរាល់
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
-            // ពង្រីកអេក្រង់ឱ្យធំពេញ (TikTok Style ងាយស្រួលមើល)
             window.Telegram.WebApp.expand();
         }
     </script>
     
-    <!-- Fonts -->
+    <!-- Fonts & CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -30,18 +26,23 @@
             -webkit-tap-highlight-color: transparent;
             scroll-behavior: smooth;
         }
+
+        /* បង្ខំឱ្យប្រអប់ជ្រើសរើស និង Option ទាំងអស់ប្រើប្រាស់ Font Kantumruy Pro */
+        select, option, input, button {
+            font-family: 'Kantumruy Pro', sans-serif !important;
+        }
         
-        /* កែសម្រួលរបារអូស Category ឱ្យទន់ល្មើយ និងងាយស្រួលអូសលើទូរស័ព្ទ */
+        /* របារអូស Category ឱ្យទន់ល្មើយ និងងាយស្រួលអូសលើទូរស័ព្ទ */
         .category-scroll-container {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             overflow-x: auto;
             scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch; /* ធ្វើឱ្យអូសទៅឆ្វេងស្តាំទន់ដៃ និងរលូនខ្លាំង */
-            scrollbar-width: none; /* លាក់របារ Scroll លើ Firefox */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; 
         }
         .category-scroll-container::-webkit-scrollbar {
-            display: none; /* លាក់របារ Scroll លើ Chrome/Safari */
+            display: none; 
         }
 
         .category-btn.active {
@@ -49,20 +50,13 @@
             color: white;
             border-color: #111827;
         }
-        
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
 
         .category-section-title {
             position: sticky;
             top: 110px;
             z-index: 20;
             background-color: #f3f4f6;
-            padding: 10px 0;
+            padding: 8px 0;
         }
 
         @keyframes zoomIn {
@@ -81,11 +75,10 @@
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center font-bold text-sm">D</div>
                 <div>
-                    <h1 class="font-extrabold text-lg leading-none tracking-tight">DADING SHOP</h1>
+                    <h1 class="font-extrabold text-base leading-none tracking-tight">DADING SHOP</h1>
                     <p class="text-[9px] text-gray-400 font-medium tracking-wide mt-1">មានលក់រាយនិងបោះដុំ សម្ភារៈជាង បន្ទប់ទឹក និងម៉ូទ័រ</p>
                 </div>
             </div>
-            <!-- ប៊ូតុងទំនាក់ទំនងផ្នែកលក់ (Random Telegram Topic Link) -->
             <button onclick="redirectToRandomTopic()" class="p-2 hover:bg-gray-800 rounded-full transition flex items-center gap-1.5 text-xs text-green-400 font-bold">
                 <i class="fa-brands fa-telegram text-2xl"></i>
                 <span class="hidden sm:inline">ទំនាក់ទំនងផ្នែកលក់</span>
@@ -104,14 +97,14 @@
                        class="w-full pl-10 pr-4 py-3 rounded-2xl border-none shadow-sm bg-white focus:ring-2 focus:ring-gray-900 outline-none text-sm font-medium">
             </div>
 
-            <!-- Category Container (កែប្រែទៅជា Class ដែលអាចអូសបានលឿន និងទន់ដៃ) -->
+            <!-- Category Container -->
             <div id="category-list" class="category-scroll-container pb-1">
-                <button onclick="scrollToCat('all', this)" class="category-btn active px-5 py-2 rounded-full text-sm font-medium border bg-white text-gray-600 whitespace-nowrap shadow-sm" data-cat="all">ទាំងអស់</button>
+                <button onclick="scrollToCat('all', this)" class="category-btn active px-4 py-1.5 rounded-full text-xs font-medium border bg-white text-gray-600 whitespace-nowrap shadow-sm" data-cat="all">ទាំងអស់</button>
             </div>
         </div>
 
-        <!-- កន្លែងបង្ហាញទំនិញបែងចែកតាម Section -->
-        <main id="products-container" class="px-4 pb-4 mt-2 space-y-8"></main>
+        <!-- កន្លែងបង្ហាញទំនិញបែងចែកតាម Category Sections -->
+        <main id="products-container" class="px-4 pb-4 mt-2 space-y-6"></main>
         
         <div id="loading" class="hidden text-center py-10">
             <i class="fa-solid fa-circle-notch fa-spin text-gray-400 text-2xl"></i>
@@ -135,10 +128,8 @@
             
             <div class="mt-4 text-center w-full max-w-sm px-4">
                 <h2 id="preview-name" class="text-white text-base font-bold mb-1 line-clamp-2"></h2>
-                <!-- បង្ហាញលេខកូដទំនិញនៅលើ preview -->
                 <p id="preview-code" class="text-[11px] bg-red-600 text-white px-3 py-1 rounded-full w-max mx-auto mb-3 font-semibold"></p>
                 
-                <!-- ប៊ូតុងទំនាក់ទំនងផ្នែកលក់ (Random Topic Telegram) -->
                 <button onclick="redirectToRandomTopic()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-xl text-sm">
                     <i class="fa-brands fa-telegram text-xl"></i>
                     <span>ទំនាក់ទំនងផ្នែកលក់</span>
@@ -150,7 +141,7 @@
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3 z-[110] transform translate-y-20 opacity-0 transition-all duration-300 w-max max-w-[90%]">
         <i class="fa-solid fa-circle-check text-green-400"></i>
-        <span id="toast-msg" class="text-sm font-medium">Success</span>
+        <span id="toast-msg" class="text-sm font-medium">ជោគជ័យ</span>
     </div>
 
     <script>
@@ -169,36 +160,22 @@
         let rawData = []; 
         let groupedData = []; 
 
-        // មុខងារសម្អាតអក្សរដកឃ្លា និងចុះបន្ទាត់ ដើម្បីបង្កើត ID ឱ្យមានសុវត្ថិភាពសម្រាប់ការ Scroll
+        // មុខងារបង្កើត ID សុវត្ថិភាពពីប្រភេទផលិតផលជាភាសាខ្មែរ ដោយបម្លែងជាលក្ខណៈ Hash
         function getSafeId(text) {
-            if (!text) return '';
-            
-            // ប្តូរជាអក្សរតូច សម្អាតការដកឃ្លា ការចុះបន្ទាត់ និងតួអក្សរពិសេស
-            let cleanText = text.toString().toLowerCase()
-                .trim()
-                .replace(/[\r\n]+/g, '') // លុបការចុះបន្ទាត់
-                .replace(/\s+/g, '');     // លុបការដកឃ្លាទាំងអស់
-                
-            let safeString = '';
+            if (!text) return 'cat-default';
+            let hash = 0;
+            const cleanText = text.toString().trim();
             for (let i = 0; i < cleanText.length; i++) {
-                let charCode = cleanText.charCodeAt(i);
-                // អនុញ្ញាតតែអក្សរឡាតាំង (a-z) លេខ (0-9) និងភាសាខ្មែរ (CharCode ចន្លោះពី 6016 ដល់ 6143)
-                if ((charCode >= 97 && charCode <= 122) || 
-                    (charCode >= 48 && charCode <= 57) || 
-                    (charCode >= 6016 && charCode <= 6143)) {
-                    safeString += cleanText.charAt(i);
-                }
+                hash = cleanText.charCodeAt(i) + ((hash << 5) - hash);
             }
-            
-            return safeString || 'category';
+            return 'cat-' + Math.abs(hash).toString(16);
         }
 
-        // មុខងារកែតម្រូវតំណភ្ជាប់រូបភាពឱ្យបង្ហាញផ្ទាល់ (Direct Link) ករណីប្រើ Google Drive
+        // មុខងារកែតម្រូវតំណភ្ជាប់រូបភាព Google Drive ឱ្យបង្ហាញផ្ទាល់
         function formatImageUrl(url) {
             if (!url) return 'https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image';
             let cleanUrl = url.trim();
             
-            // ករណី Link មកពី Google Drive ធម្មតា
             if (cleanUrl.includes('drive.google.com')) {
                 let id = '';
                 if (cleanUrl.includes('id=')) {
@@ -230,8 +207,7 @@
                             code: row['code'] ? row['code'].toString().trim() : index.toString(),
                             gcode: (row['g-code'] && row['g-code'].trim() !== '') ? row['g-code'].trim() : null, 
                             name: row['product name'] || row['productname'] || 'ទំនិញគ្មានឈ្មោះ',
-                            price: parseFloat(row['price']?.toString().replace(/[$,]/g, '')) || 0,
-                            cat: (row['category'] || 'ផ្សេងៗ').trim().replace(/[\r\n]+/g, ' '), // សម្អាតឈ្មោះ Category
+                            cat: (row['category'] || 'ផ្សេងៗ').trim().replace(/[\r\n]+/g, ' '), 
                             img: formatImageUrl(rawImg),
                             variant: row['variant/size'] || row['variant'] || ''
                         };
@@ -269,43 +245,68 @@
 
         function generateCategoryButtons() {
             const catList = document.getElementById('category-list');
-            
-            // សម្អាតប៊ូតុងចាស់ៗ (រក្សាទុកតែ "ទាំងអស់")
-            catList.innerHTML = `<button onclick="scrollToCat('all', this)" class="category-btn active px-5 py-2 rounded-full text-sm font-medium border bg-white text-gray-600 whitespace-nowrap shadow-sm" data-cat="all">ទាំងអស់</button>`;
+            catList.innerHTML = `<button onclick="scrollToCat('all', this)" class="category-btn active px-4 py-1.5 rounded-full text-xs font-medium border bg-white text-gray-600 whitespace-nowrap shadow-sm" data-cat="all">ទាំងអស់</button>`;
             
             const categories = [...new Set(rawData.map(item => item.cat))];
             
             categories.forEach(cat => {
                 if (cat && cat !== 'ផ្សេងៗ') {
                     const btn = document.createElement('button');
-                    btn.className = "category-btn px-5 py-2 rounded-full text-sm font-medium border bg-white text-gray-600 whitespace-nowrap shadow-sm";
+                    btn.className = "category-btn px-4 py-1.5 rounded-full text-xs font-medium border bg-white text-gray-600 whitespace-nowrap shadow-sm";
                     btn.innerText = cat;
-                    btn.setAttribute('data-cat', getSafeId(cat)); // ប្រើប្រាស់ Safe ID
+                    btn.setAttribute('data-cat', getSafeId(cat)); 
                     btn.onclick = (e) => scrollToCat(cat, e.target);
                     catList.appendChild(btn);
                 }
             });
         }
 
+        // ប្រព័ន្ធបំលែង CSV ទៅជា JSON យ៉ាងមានលំនឹង និងត្រឹមត្រូវតាមស្ដង់ដារ RFC 4180
         function csvToJson(csv) {
-            const lines = csv.split('\n');
-            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase()); 
+            const lines = [];
+            let row = [""];
+            let inQuotes = false;
+
+            for (let i = 0; i < csv.length; i++) {
+                let c = csv[i];
+                let next = csv[i+1];
+                if (c === '"') {
+                    if (inQuotes && next === '"') {
+                        row[row.length - 1] += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (c === ',' && !inQuotes) {
+                    row.push('');
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && next === '\n') { i++; }
+                    lines.push(row);
+                    row = [''];
+                } else {
+                    row[row.length - 1] += c;
+                }
+            }
+            if (row.length > 1 || row[0] !== '') {
+                lines.push(row);
+            }
+
+            if (lines.length === 0) return [];
+
+            const headers = lines[0].map(h => h.replace(/"/g, '').trim().toLowerCase()); 
             const result = [];
+
             for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const row = [];
-                let inQuote = false, currentCell = '';
-                for (let char of lines[i]) {
-                    if (char === '"') inQuote = !inQuote;
-                    else if (char === ',' && !inQuote) { row.push(currentCell.replace(/"/g, '').trim()); currentCell = ''; }
-                    else currentCell += char;
-                }
-                row.push(currentCell.replace(/"/g, '').trim());
-                if (row.length > 1) {
-                    let obj = {};
-                    headers.forEach((header, index) => { if (row[index] !== undefined) obj[header] = row[index]; });
-                    result.push(obj);
-                }
+                const currentLine = lines[i];
+                if (currentLine.length === 0 || (currentLine.length === 1 && currentLine[0] === '')) continue;
+                
+                let obj = {};
+                headers.forEach((header, index) => {
+                    if (currentLine[index] !== undefined) {
+                        obj[header] = currentLine[index].replace(/"/g, '').trim();
+                    }
+                });
+                result.push(obj);
             }
             return result;
         }
@@ -332,12 +333,13 @@
                 if (items.length > 0) {
                     hasResults = true;
                     const section = document.createElement('section');
-                    section.id = `section-${getSafeId(cat)}`; // ប្រើប្រាស់ Safe ID សម្រាប់ section
+                    section.id = `section-${getSafeId(cat)}`; 
+                    section.className = "scroll-mt-[160px]";
                     section.innerHTML = `
                         <div class="category-section-title">
-                            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-red-500 pl-3">${cat}</h2>
+                            <h2 class="text-sm font-bold text-gray-800 border-l-4 border-red-500 pl-2">${cat}</h2>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 mt-3">
+                        <div class="grid grid-cols-2 gap-2 mt-2">
                             ${items.map(g => renderProductCard(g)).join('')}
                         </div>
                     `;
@@ -354,27 +356,26 @@
             const hasMultiple = g.variants.length > 1;
 
             return `
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group transition-all duration-300">
-                <!-- ចុចលើរូបភាពដើម្បីពង្រីកមើល (openPreview) -->
-                <div class="relative aspect-square bg-gray-100 cursor-pointer" onclick="openPreview('${firstVar.code}', '${g.gkey}')">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group transition-all duration-300 flex flex-col justify-between">
+                <!-- រូបភាពបង្រួមតូចល្មម (h-28 សម្រាប់ទូរស័ព្ទ) និងមានល្បឿនលឿន -->
+                <div class="relative h-28 sm:h-36 bg-gray-100 cursor-pointer overflow-hidden" onclick="openPreview('${firstVar.code}', '${g.gkey}')">
                     <img src="${firstVar.img}" id="img-${g.gkey}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image'">
-                    <span id="tag-${g.gkey}" class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">${firstVar.variant || firstVar.code}</span>
+                    <span id="tag-${g.gkey}" class="absolute top-1 left-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">${firstVar.variant || firstVar.code}</span>
                     <div class="absolute inset-0 bg-black/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl drop-shadow-md"></i>
+                        <i class="fa-solid fa-magnifying-glass-plus text-white text-xl drop-shadow-md"></i>
                     </div>
                 </div>
-                <div class="p-3">
-                    <div class="h-10 mb-1">
-                        <h3 id="name-${g.gkey}" class="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight">${firstVar.name}</h3>
+                <div class="p-2 flex flex-col justify-between flex-grow">
+                    <div class="mb-1">
+                        <h3 id="name-${g.gkey}" class="text-[11px] font-semibold text-gray-800 line-clamp-2 leading-tight h-8">${firstVar.name}</h3>
                     </div>
-                    <div class="mb-3 ${hasMultiple ? '' : 'invisible h-8'}">
+                    <div class="mt-1 ${hasMultiple ? '' : 'invisible h-7'}">
                         ${hasMultiple ? `
-                        <!-- កែប្រែទៅជាបង្ហាញ Product Name (v.name) ដែលមិនទាន់បានបង្ហាញជំនួសវិញ ដើម្បីឱ្យអតិថិជនមើលដឹងច្បាស់ -->
-                        <select onchange="handleDropdownChange('${g.gkey}', this)" id="select-${g.gkey}" class="w-full text-[10px] bg-red-50 border border-red-200 text-red-700 rounded-lg p-1.5 outline-none font-bold cursor-pointer hover:bg-red-100 transition-colors">
-                            <option value="" disabled selected>🔍 នៅមានជម្រើសទំហំផ្សេងទៀត...</option>
+                        <select onchange="handleDropdownChange('${g.gkey}', this)" id="select-${g.gkey}" class="w-full text-[10px] bg-red-50 border border-red-200 text-red-700 rounded-lg py-1 px-2 outline-none font-bold cursor-pointer hover:bg-red-100 transition-colors shadow-sm appearance-none pr-6 relative" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b91c1c%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 8px top 50%; background-size: 8px auto;">
+                            <option value="" disabled selected class="text-gray-500">🔍 ជម្រើសផ្សេងទៀត...</option>
                             ${g.variants.map(v => {
                                 const displayText = `${v.name} [${v.code}]`;
-                                return `<option value="${v.code}" ${v.code === firstVar.code ? 'class="hidden"' : ''}>${displayText}</option>`;
+                                return `<option value="${v.code}" ${v.code === firstVar.code ? 'class="hidden"' : ''} class="text-gray-800 font-medium py-1 text-[10px]">${displayText}</option>`;
                             }).join('')}
                         </select>` : `<input type="hidden" id="select-${g.gkey}" value="${firstVar.code}">`}
                     </div>
@@ -382,37 +383,28 @@
             </div>`;
         }
 
-        // មុខងារគ្រប់គ្រងការចុចប្តូរប្រភេទនៅក្នុង Dropdown ឱ្យមានការផ្លាស់ប្តូរត្រលប់ទៅមកយ៉ាងទាក់ទាញ
         function handleDropdownChange(gkey, selectEl) {
             const selectedCode = selectEl.value;
             if (!selectedCode) return;
 
-            // ធ្វើបច្ចុប្បន្នភាពកាតទំនិញ
             updateVariantDisplay(gkey, selectedCode);
 
-            // រៀបចំបញ្ជី Option នៅក្នុង Dropdown ឡើងវិញ៖
-            // - លាក់ Option ដែលកំពុងបង្ហាញថ្មីនេះ
-            // - បង្ហាញ Option ដែលធ្លាប់បង្ហាញពីមុនឡើងវិញ
             const options = selectEl.querySelectorAll('option');
             options.forEach(opt => {
                 if (opt.value === selectedCode) {
-                    opt.classList.add('hidden'); // លាក់ប្រភេទដែលទើបតែបានប្តូរទៅកាន់រូបភាព
+                    opt.classList.add('hidden'); 
                 } else if (opt.value !== "") {
-                    opt.classList.remove('hidden'); // បង្ហាញប្រភេទផ្សេងៗមកវិញ
+                    opt.classList.remove('hidden'); 
                 }
             });
 
-            // កំណត់ទម្រង់ Default ឱ្យទៅជាអត្ថបទណែនាំវិញ
             selectEl.value = "";
         }
 
-        // មុខងារពង្រីកមើលរូបភាព និងព័ត៌មានលម្អិត
         function openPreview(code, gkey) {
-            // ប្រសិនបើភ្ញៀវធ្លាប់បានចុចប្តូរ Variant នៅខាងក្រៅរួចហើយ គឺត្រូវយកកូដទំនិញដែលបានប្តូរនោះទៅបើក Preview
             const imgEl = document.getElementById(`img-${gkey}`);
             const currentTag = document.getElementById(`tag-${gkey}`)?.innerText;
             
-            // ស្វែងរកទំនិញតាមរយៈ Tag ជម្រើស ឬកូដដែលកំពុងបង្ហាញនៅលើកាត
             let product = rawData.find(v => v.code === code);
             if (currentTag) {
                 const foundByTag = rawData.find(v => (v.variant || v.code) === currentTag);
@@ -439,7 +431,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // មុខងារ Random ជ្រើសរើសលីង Topic ហើយបើកទៅកាន់ Telegram
         function redirectToRandomTopic() {
             const randomIndex = Math.floor(Math.random() * TELEGRAM_TOPIC_LINKS.length);
             const targetLink = TELEGRAM_TOPIC_LINKS[randomIndex];
@@ -450,7 +441,6 @@
             }, 500);
         }
 
-        // មុខងារ Scroll ទៅកាន់ផ្នែក Category
         function scrollToCat(cat, btn) {
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -461,7 +451,7 @@
                 const safeId = getSafeId(cat);
                 const target = document.getElementById(`section-${safeId}`);
                 if (target) {
-                    const offset = 160; 
+                    const offset = 150; 
                     const bodyRect = document.body.getBoundingClientRect().top;
                     const elementRect = target.getBoundingClientRect().top;
                     const elementPosition = elementRect - bodyRect;
@@ -483,7 +473,6 @@
             document.getElementById(`tag-${gkey}`).innerText = item.variant || item.code;
         }
 
-        // មុខងារស្វែងរកទំនិញ
         function searchProduct() {
             const q = document.getElementById('search').value.toLowerCase().trim();
             renderBySections(q);
@@ -501,10 +490,11 @@
             const sections = document.querySelectorAll('section');
             const navLinks = document.querySelectorAll('.category-btn');
             let current = 'all';
+            const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
 
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 180) {
+                if (scrollTop >= sectionTop - 180) {
                     current = section.getAttribute('id').replace('section-', '');
                 }
             });
