@@ -64,6 +64,15 @@
             to { transform: scale(1); opacity: 1; }
         }
         .animate-zoom { animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* លាក់របារអូសសម្រាប់ Preview Slider */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 
@@ -117,18 +126,42 @@
 
     </div>
 
-    <!-- IMAGE PREVIEW MODAL -->
+    <!-- IMAGE PREVIEW MODAL WITH SLIDER -->
     <div id="image-preview" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-[100] flex flex-col items-center justify-center p-2">
         <button onclick="closePreview()" class="absolute top-4 right-4 text-white text-3xl hover:scale-110 transition-transform bg-black/40 w-10 h-10 rounded-full flex items-center justify-center z-50">
             <i class="fa-solid fa-xmark"></i>
         </button>
         
         <div class="w-full max-w-md flex flex-col items-center justify-center">
-            <img id="preview-img" src="" class="max-w-[95%] max-h-[75vh] rounded-3xl shadow-2xl animate-zoom object-contain bg-white" onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image'">
+            
+            <!-- Beautiful Slide Container -->
+            <div class="relative w-[92%] aspect-square bg-white rounded-3xl overflow-hidden shadow-2xl group">
+                <!-- Swiper Element -->
+                <div id="preview-slider" onscroll="handleSliderScroll()" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full h-full scrollbar-none">
+                    <!-- Images will render here dynamically -->
+                </div>
+                
+                <!-- Left Slide Arrow -->
+                <button id="slide-prev" onclick="moveSlide(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100 hidden">
+                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                </button>
+                
+                <!-- Right Slide Arrow -->
+                <button id="slide-next" onclick="moveSlide(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100 hidden">
+                    <i class="fa-solid fa-chevron-right text-sm"></i>
+                </button>
+                
+                <!-- Slide Dots Indicator -->
+                <div id="slider-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 z-10">
+                    <!-- Dots will render here dynamically -->
+                </div>
+            </div>
             
             <div class="mt-4 text-center w-full max-w-sm px-4">
                 <h2 id="preview-name" class="text-white text-base font-bold mb-1 line-clamp-2"></h2>
-                <p id="preview-code" class="text-[11px] bg-red-600 text-white px-3 py-1 rounded-full w-max mx-auto mb-3 font-semibold"></p>
+                <p id="preview-code" class="text-[11px] bg-red-600 text-white px-3 py-1 rounded-full w-max mx-auto mb-2.5 font-semibold"></p>
+                <!-- បានកែសម្រួល៖ បង្ហាញតែព័ត៌មានលម្អិតដែលបានបំពេញក្នុង Google Sheet ផ្ទាល់តែម្តង -->
+                <p id="preview-variant" class="text-[12px] text-gray-200 mb-3.5 font-semibold bg-white/10 border border-white/5 px-3 py-1.5 rounded-xl inline-block max-w-[90%]"></p>
                 
                 <button onclick="redirectToRandomTopic()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-xl text-sm">
                     <i class="fa-brands fa-telegram text-xl"></i>
@@ -159,6 +192,8 @@
 
         let rawData = []; 
         let groupedData = []; 
+        let previewImagesList = [];
+        let currentImgIndex = 0;
 
         // មុខងារបង្កើត ID សុវត្ថិភាពពីប្រភេទផលិតផលជាភាសាខ្មែរ ដោយបម្លែងជាលក្ខណៈ Hash
         function getSafeId(text) {
@@ -173,7 +208,7 @@
 
         // មុខងារកែតម្រូវតំណភ្ជាប់រូបភាព Google Drive ឱ្យបង្ហាញផ្ទាល់
         function formatImageUrl(url) {
-            if (!url) return 'https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image';
+            if (!url) return '';
             let cleanUrl = url.trim();
             
             if (cleanUrl.includes('drive.google.com')) {
@@ -203,12 +238,25 @@
                 if (sheetData.length > 0) {
                     rawData = sheetData.map((row, index) => {
                         const rawImg = row['image link'] || row['imagelink'] || '';
+                        const rawImg1 = row['image link1'] || row['imagelink1'] || '';
+                        const rawImg2 = row['image link2'] || row['imagelink2'] || '';
+                        
+                        const mainImg = formatImageUrl(rawImg) || 'https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image';
+                        const extraImg1 = formatImageUrl(rawImg1);
+                        const extraImg2 = formatImageUrl(rawImg2);
+                        
+                        // បង្កើតបញ្ជីរូបភាពដែលត្រឹមត្រូវទាំងអស់ (ដកចោលលីងទទេរ)
+                        const imgs = [mainImg];
+                        if (extraImg1) imgs.push(extraImg1);
+                        if (extraImg2) imgs.push(extraImg2);
+
                         return {
                             code: row['code'] ? row['code'].toString().trim() : index.toString(),
                             gcode: (row['g-code'] && row['g-code'].trim() !== '') ? row['g-code'].trim() : null, 
                             name: row['product name'] || row['productname'] || 'ទំនិញគ្មានឈ្មោះ',
                             cat: (row['category'] || 'ផ្សេងៗ').trim().replace(/[\r\n]+/g, ' '), 
-                            img: formatImageUrl(rawImg),
+                            img: mainImg,
+                            imgs: imgs,
                             variant: row['variant/size'] || row['variant'] || ''
                         };
                     });
@@ -357,10 +405,11 @@
 
             return `
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group transition-all duration-300 flex flex-col justify-between">
-                <!-- រូបភាពបង្រួមតូចល្មម (h-28 សម្រាប់ទូរស័ព្ទ) និងមានល្បឿនលឿន -->
+                <!-- រូបភាពចម្បងតែមួយសន្លឹកនៅលើ Grid ក្រៅ (h-28 សម្រាប់ទូរស័ព្ទ) -->
                 <div class="relative h-28 sm:h-36 bg-gray-100 cursor-pointer overflow-hidden" onclick="openPreview('${firstVar.code}', '${g.gkey}')">
                     <img src="${firstVar.img}" id="img-${g.gkey}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image'">
-                    <span id="tag-${g.gkey}" class="absolute top-1 left-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">${firstVar.variant || firstVar.code}</span>
+                    <!-- កែតម្រូវនៅទីនេះ៖ លាក់ស្លាកសញ្ញា Variant/Size/Code ចេញពីលើរូបភាព ប៉ុន្តែរក្សារាងទុកដើម្បីឱ្យកូដខាងក្រោមដំណើរការស្រួល -->
+                    <span id="tag-${g.gkey}" class="hidden">${firstVar.variant || firstVar.code}</span>
                     <div class="absolute inset-0 bg-black/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <i class="fa-solid fa-magnifying-glass-plus text-white text-xl drop-shadow-md"></i>
                     </div>
@@ -401,8 +450,8 @@
             selectEl.value = "";
         }
 
+        // មុខងារបើកទិដ្ឋភាព Preview រួមជាមួយ Slide រូបភាព
         function openPreview(code, gkey) {
-            const imgEl = document.getElementById(`img-${gkey}`);
             const currentTag = document.getElementById(`tag-${gkey}`)?.innerText;
             
             let product = rawData.find(v => v.code === code);
@@ -414,16 +463,105 @@
             if (!product) return;
 
             const modal = document.getElementById('image-preview');
-            const img = document.getElementById('preview-img');
             const name = document.getElementById('preview-name');
             const codeEl = document.getElementById('preview-code');
+            const variantEl = document.getElementById('preview-variant');
 
-            img.src = product.img;
             name.innerText = product.name;
             codeEl.innerText = `កូដ: ${product.code}`;
 
+            // បង្ហាញតែព័ត៌មានលម្អិតដែលបានបំពេញក្នុង Google Sheet (លុបពាក្យ ជម្រើស/ទំហំ: ចេញ)
+            if (product.variant && product.variant.trim() !== "") {
+                variantEl.innerText = product.variant;
+                variantEl.classList.remove('hidden');
+            } else {
+                variantEl.innerText = "";
+                variantEl.classList.add('hidden');
+            }
+
+            // រៀបចំប្រព័ន្ធស្លាយរូបភាព
+            initPreviewSlider(product.imgs);
+
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; 
+        }
+
+        // មុខងារបង្កើតប្រព័ន្ធស្លាយ និងគ្រាប់ចុច Dot
+        function initPreviewSlider(imgs) {
+            previewImagesList = imgs;
+            currentImgIndex = 0;
+            
+            const slider = document.getElementById('preview-slider');
+            const dotsContainer = document.getElementById('slider-dots');
+            const prevBtn = document.getElementById('slide-prev');
+            const nextBtn = document.getElementById('slide-next');
+
+            // បង្ហាញរូបភាពក្នុង Slider
+            slider.innerHTML = imgs.map(imgUrl => `
+                <div class="w-full h-full shrink-0 snap-center flex items-center justify-center bg-white p-4">
+                    <img src="${imgUrl}" class="max-w-full max-h-full rounded-2xl object-contain" onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image'">
+                </div>
+            `).join('');
+
+            // រៀបចំគ្រាប់ចុចបង្ហាញចំនួនរូបភាព (Dot Indicators)
+            if (imgs.length > 1) {
+                dotsContainer.innerHTML = imgs.map((_, i) => `
+                    <span onclick="goToSlide(${i})" class="slider-dot w-2 h-2 rounded-full bg-gray-300 transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-red-600 !w-4' : ''}"></span>
+                `).join('');
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                dotsContainer.innerHTML = '';
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
+
+            // សារ៉េទៅរូបភាពទី ១ វិញ
+            slider.scrollLeft = 0;
+        }
+
+        // មុខងារត្រួតពិនិត្យពេលអ្នកប្រើប្រាស់អូសស្លាយលើទូរស័ព្ទ
+        function handleSliderScroll() {
+            const slider = document.getElementById('preview-slider');
+            const width = slider.clientWidth;
+            if (width === 0) return;
+            const index = Math.round(slider.scrollLeft / width);
+            if (index !== currentImgIndex) {
+                currentImgIndex = index;
+                updateSliderDots();
+            }
+        }
+
+        // មុខងារផ្លាស់ប្តូរគ្រាប់ចុច Dot ទៅតាមស្លាយពិតប្រាកដ
+        function updateSliderDots() {
+            const dots = document.querySelectorAll('.slider-dot');
+            dots.forEach((dot, i) => {
+                if (i === currentImgIndex) {
+                    dot.classList.add('bg-red-600', '!w-4');
+                    dot.classList.remove('bg-gray-300');
+                } else {
+                    dot.classList.remove('bg-red-600', '!w-4');
+                    dot.classList.add('bg-gray-300');
+                }
+            });
+        }
+
+        // មុខងាររុញស្លាយតាមរយៈប៊ូតុងព្រួញ ឆ្វេង-ស្តាំ
+        function moveSlide(direction) {
+            const newIndex = Math.max(0, Math.min(previewImagesList.length - 1, currentImgIndex + direction));
+            goToSlide(newIndex);
+        }
+
+        // មុខងាររុញស្លាយទៅកាន់សន្ទស្សន៍ (Index) ជាក់លាក់
+        function goToSlide(index) {
+            const slider = document.getElementById('preview-slider');
+            const width = slider.clientWidth;
+            slider.scrollTo({
+                left: index * width,
+                behavior: 'smooth'
+            });
+            currentImgIndex = index;
+            updateSliderDots();
         }
 
         function closePreview() {
@@ -465,6 +603,7 @@
             }
         }
 
+        // ធ្វើបច្ចុប្បន្នភាពការបង្ហាញរូបភាពតាមការជ្រើសរើស Variant
         function updateVariantDisplay(gkey, selectedCode) {
             const item = rawData.find(v => v.code === selectedCode);
             if (!item) return;
