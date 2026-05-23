@@ -88,7 +88,8 @@
                     <p class="text-[9px] text-gray-400 font-medium tracking-wide mt-1">មានលក់រាយនិងបោះដុំ សម្ភារៈជាង បន្ទប់ទឹក និងម៉ូទ័រ</p>
                 </div>
             </div>
-            <button onclick="redirectToRandomTopic()" class="p-2 hover:bg-gray-800 rounded-full transition flex items-center gap-1.5 text-xs text-green-400 font-bold">
+            <!-- បើកផ្ទាំងទំនាក់ទំនង Contact Modal -->
+            <button onclick="openContactModal()" class="p-2 hover:bg-gray-800 rounded-full transition flex items-center gap-1.5 text-xs text-green-400 font-bold">
                 <i class="fa-brands fa-telegram text-2xl"></i>
                 <span class="hidden sm:inline">ទំនាក់ទំនងផ្នែកលក់</span>
             </button>
@@ -160,13 +161,75 @@
             <div class="mt-4 text-center w-full max-w-sm px-4">
                 <h2 id="preview-name" class="text-white text-base font-bold mb-1 line-clamp-2"></h2>
                 <p id="preview-code" class="text-[11px] bg-red-600 text-white px-3 py-1 rounded-full w-max mx-auto mb-2.5 font-semibold"></p>
-                <!-- បានកែសម្រួល៖ បង្ហាញតែព័ត៌មានលម្អិតដែលបានបំពេញក្នុង Google Sheet ផ្ទាល់តែម្តង -->
                 <p id="preview-variant" class="text-[12px] text-gray-200 mb-3.5 font-semibold bg-white/10 border border-white/5 px-3 py-1.5 rounded-xl inline-block max-w-[90%]"></p>
                 
-                <button onclick="redirectToRandomTopic()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-xl text-sm">
+                <!-- ប៊ូតុងបើក Contact Modal -->
+                <button onclick="openContactModal()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-xl text-sm">
                     <i class="fa-brands fa-telegram text-xl"></i>
                     <span>ទំនាក់ទំនងផ្នែកលក់</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMBEDDED CONTACT MODAL (កែសម្រួលស្ទីលកញ្ចក់ថ្លាព្រិល និងដកពាក្យ ចែធំ ចេញ) -->
+    <div id="contact-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden z-[110] flex items-center justify-center p-4">
+        <div class="bg-white/80 backdrop-blur-xl border border-white/30 rounded-3xl w-full max-w-sm p-5 shadow-2xl relative animate-zoom">
+            <!-- ប៊ូតុងបិទ -->
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl w-8 h-8 rounded-full flex items-center justify-center bg-white/60 border border-white/30 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- ក្បាលទំព័រ Modal -->
+            <div class="text-center mb-5">
+                <h2 class="text-lg font-bold text-gray-900">ទំនាក់ទំនងមកយើងខ្ញុំ</h2>
+                <p class="text-xs text-gray-500 mt-1">សូមជ្រើសរើសគណនីតេឡេក្រាមខាងក្រោម</p>
+            </div>
+            
+            <!-- បញ្ជីប៊ូតុងទំនាក់ទំនង -->
+            <div class="space-y-4">
+                <!-- ផ្នែក Official Account -->
+                <div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-2">គណនីផ្លូវការ (Official Account)</span>
+                    <a href="https://t.me/dading_boss" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-between shadow-md active:scale-95 transition-all text-sm">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-brands fa-telegram text-xl"></i>
+                            DADING Boss
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-75"></i>
+                    </a>
+                </div>
+                
+                <!-- ផ្នែកភ្នាក់ងារលក់ -->
+                <div>
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-2">ទំនាក់ទំនងផ្នែកលក់ (Sales Team)</span>
+                    <div class="grid grid-cols-1 gap-2.5 max-h-60 overflow-y-auto pr-1">
+                        <!-- អ្នកលក់ ១ -->
+                        <a href="https://t.me/dading_zhu" target="_blank" class="w-full bg-white/50 hover:bg-white/80 border border-white/40 text-gray-800 py-2.5 px-3 rounded-xl font-semibold flex items-center gap-3 active:scale-95 transition-all text-xs">
+                            <div class="w-7 h-7 bg-red-100 text-red-600 rounded-lg flex items-center justify-center font-bold">១</div>
+                            <span class="flex-grow text-left">អ្នកលក់ ១</span>
+                            <i class="fa-brands fa-telegram text-lg text-blue-500"></i>
+                        </a>
+                        <!-- អ្នកលក់ ២ -->
+                        <a href="https://t.me/dading_02" target="_blank" class="w-full bg-white/50 hover:bg-white/80 border border-white/40 text-gray-800 py-2.5 px-3 rounded-xl font-semibold flex items-center gap-3 active:scale-95 transition-all text-xs">
+                            <div class="w-7 h-7 bg-red-100 text-red-600 rounded-lg flex items-center justify-center font-bold">២</div>
+                            <span class="flex-grow text-left">អ្នកលក់ ២</span>
+                            <i class="fa-brands fa-telegram text-lg text-blue-500"></i>
+                        </a>
+                        <!-- អ្នកលក់ ៣ -->
+                        <a href="https://t.me/dading_03" target="_blank" class="w-full bg-white/50 hover:bg-white/80 border border-white/40 text-gray-800 py-2.5 px-3 rounded-xl font-semibold flex items-center gap-3 active:scale-95 transition-all text-xs">
+                            <div class="w-7 h-7 bg-red-100 text-red-600 rounded-lg flex items-center justify-center font-bold">៣</div>
+                            <span class="flex-grow text-left">អ្នកលក់ ៣</span>
+                            <i class="fa-brands fa-telegram text-lg text-blue-500"></i>
+                        </a>
+                        <!-- អ្នកលក់ ៤ -->
+                        <a href="https://t.me/dading_04" target="_blank" class="w-full bg-white/50 hover:bg-white/80 border border-white/40 text-gray-800 py-2.5 px-3 rounded-xl font-semibold flex items-center gap-3 active:scale-95 transition-all text-xs">
+                            <div class="w-7 h-7 bg-red-100 text-red-600 rounded-lg flex items-center justify-center font-bold">៤</div>
+                            <span class="flex-grow text-left">អ្នកលក់ ៤</span>
+                            <i class="fa-brands fa-telegram text-lg text-blue-500"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -181,14 +244,6 @@
         // Google Sheet Config
         const SHEET_ID = '1T0401xemiyUKa4i0Okhx525XA9ARl7j7TwUQLaLVJAA'; 
         const SHEET_NAME = 'Sheet1'; 
-
-        // Telegram Topics Config
-        const TELEGRAM_TOPIC_LINKS = [
-            "https://t.me/c/3827031711/3",
-            "https://t.me/c/3827031711/5",
-            "https://t.me/c/3827031711/7",
-            "https://t.me/c/3827031711/9"
-        ];
 
         let rawData = []; 
         let groupedData = []; 
@@ -404,12 +459,10 @@
             const hasMultiple = g.variants.length > 1;
 
             return `
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group transition-all duration-300 flex flex-col justify-between">
-                <!-- រូបភាពចម្បងតែមួយសន្លឹកនៅលើ Grid ក្រៅ (h-28 សម្រាប់ទូរស័ព្ទ) -->
-                <div class="relative h-28 sm:h-36 bg-gray-100 cursor-pointer overflow-hidden" onclick="openPreview('${firstVar.code}', '${g.gkey}')">
+            <div id="card-${g.gkey}" data-selected-code="${firstVar.code}" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group transition-all duration-300 flex flex-col justify-between">
+                
+                <div class="relative h-28 sm:h-36 bg-gray-100 cursor-pointer overflow-hidden" onclick="openPreview('${g.gkey}')">
                     <img src="${firstVar.img}" id="img-${g.gkey}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image'">
-                    <!-- កែតម្រូវនៅទីនេះ៖ លាក់ស្លាកសញ្ញា Variant/Size/Code ចេញពីលើរូបភាព ប៉ុន្តែរក្សារាងទុកដើម្បីឱ្យកូដខាងក្រោមដំណើរការស្រួល -->
-                    <span id="tag-${g.gkey}" class="hidden">${firstVar.variant || firstVar.code}</span>
                     <div class="absolute inset-0 bg-black/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <i class="fa-solid fa-magnifying-glass-plus text-white text-xl drop-shadow-md"></i>
                     </div>
@@ -438,6 +491,11 @@
 
             updateVariantDisplay(gkey, selectedCode);
 
+            const card = document.getElementById(`card-${gkey}`);
+            if (card) {
+                card.setAttribute('data-selected-code', selectedCode);
+            }
+
             const options = selectEl.querySelectorAll('option');
             options.forEach(opt => {
                 if (opt.value === selectedCode) {
@@ -450,16 +508,15 @@
             selectEl.value = "";
         }
 
-        // មុខងារបើកទិដ្ឋភាព Preview រួមជាមួយ Slide រូបភាព
-        function openPreview(code, gkey) {
-            const currentTag = document.getElementById(`tag-${gkey}`)?.innerText;
-            
-            let product = rawData.find(v => v.code === code);
-            if (currentTag) {
-                const foundByTag = rawData.find(v => (v.variant || v.code) === currentTag);
-                if (foundByTag) product = foundByTag;
-            }
+        // មុខងារបើកទិដ្ឋភាព Preview ដោយទាញយកទិន្នន័យពី Selected Code ជាក់ស្តែង
+        function openPreview(gkey) {
+            const card = document.getElementById(`card-${gkey}`);
+            if (!card) return;
 
+            const selectedCode = card.getAttribute('data-selected-code');
+            if (!selectedCode) return;
+
+            const product = rawData.find(v => v.code === selectedCode);
             if (!product) return;
 
             const modal = document.getElementById('image-preview');
@@ -470,7 +527,6 @@
             name.innerText = product.name;
             codeEl.innerText = `កូដ: ${product.code}`;
 
-            // បង្ហាញតែព័ត៌មានលម្អិតដែលបានបំពេញក្នុង Google Sheet (លុបពាក្យ ជម្រើស/ទំហំ: ចេញ)
             if (product.variant && product.variant.trim() !== "") {
                 variantEl.innerText = product.variant;
                 variantEl.classList.remove('hidden');
@@ -479,7 +535,6 @@
                 variantEl.classList.add('hidden');
             }
 
-            // រៀបចំប្រព័ន្ធស្លាយរូបភាព
             initPreviewSlider(product.imgs);
 
             modal.classList.remove('hidden');
@@ -496,14 +551,12 @@
             const prevBtn = document.getElementById('slide-prev');
             const nextBtn = document.getElementById('slide-next');
 
-            // បង្ហាញរូបភាពក្នុង Slider
             slider.innerHTML = imgs.map(imgUrl => `
                 <div class="w-full h-full shrink-0 snap-center flex items-center justify-center bg-white p-4">
                     <img src="${imgUrl}" class="max-w-full max-h-full rounded-2xl object-contain" onerror="this.src='https://placehold.co/400x400/f3f4f6/9ca3af?text=No+Image'">
                 </div>
             `).join('');
 
-            // រៀបចំគ្រាប់ចុចបង្ហាញចំនួនរូបភាព (Dot Indicators)
             if (imgs.length > 1) {
                 dotsContainer.innerHTML = imgs.map((_, i) => `
                     <span onclick="goToSlide(${i})" class="slider-dot w-2 h-2 rounded-full bg-gray-300 transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-red-600 !w-4' : ''}"></span>
@@ -516,7 +569,6 @@
                 nextBtn.classList.add('hidden');
             }
 
-            // សារ៉េទៅរូបភាពទី ១ វិញ
             slider.scrollLeft = 0;
         }
 
@@ -569,14 +621,26 @@
             document.body.style.overflow = 'auto';
         }
 
-        function redirectToRandomTopic() {
-            const randomIndex = Math.floor(Math.random() * TELEGRAM_TOPIC_LINKS.length);
-            const targetLink = TELEGRAM_TOPIC_LINKS[randomIndex];
-            
-            showToast("កំពុងបញ្ជូនទៅកាន់ផ្នែកសេវាកម្មអតិថិជន...");
-            setTimeout(() => {
-                window.open(targetLink, '_blank');
-            }, 500);
+        /* មុខងារគ្រប់គ្រង CONTACT MODAL (ថ្មី) */
+        function openContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.remove('hidden');
+            // បិទការ Scroll ផ្ទៃខាងក្រោយ
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.add('hidden');
+            // បើកការ Scroll ផ្ទៃខាងក្រោយឡើងវិញ
+            document.body.style.overflow = 'auto';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2500);
         }
 
         function scrollToCat(cat, btn) {
@@ -609,19 +673,11 @@
             if (!item) return;
             document.getElementById(`img-${gkey}`).src = item.img;
             document.getElementById(`name-${gkey}`).innerText = item.name;
-            document.getElementById(`tag-${gkey}`).innerText = item.variant || item.code;
         }
 
         function searchProduct() {
             const q = document.getElementById('search').value.toLowerCase().trim();
             renderBySections(q);
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2500);
         }
 
         // Scroll Spy (ប៊ូតុងរត់តាមការ Scroll យ៉ាងត្រឹមត្រូវ និងទាក់ទាញ)
